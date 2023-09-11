@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:mysql://139.162.3.95:3306/booking_doctor?serverTimezone=UTC
+    username: booking_doctor
+    password: It123456!
+    # Enables execution of data-mysql.sql script
+    platform: MYSQL
+    # Not required as we dont need to initialize dummy data in persistant database
+    # Uncomment this when the database is recreated so dummy data is added. Comment it afterwards
+    # initialization-mode: always
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+logging:
+  level:
+    # info level for all java logs
+    ROOT: info
+    # debug level for all use defined code logs
+    com.cg: info
+# Enables discovery CLient eatures
+eureka:
+  client:
+    enabled: true

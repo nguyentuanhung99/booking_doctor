@@ -1,0 +1,64 @@
+################ Consumer Tests ################ 
+
+### Fetch All Consumer
+GET http://localhost:9700/consumer
+
+### Fetch Consumer by Invalid ID
+GET http://localhost:9700/consumer/121s
+
+### Fetch Consumer by valid ID
+GET http://localhost:9700/consumer/121
+
+### Insert a Consumer - Invalid
+POST http://localhost:9700/consumer
+Content-Type: application/json
+
+{
+  "name": "Dummy Consumer",
+  "phoneNo": "9988776655"
+}
+
+### Insert a Consumer - Invalid
+POST http://localhost:9700/consumer
+Content-Type: application/json
+
+{
+  "name": "Dummy Consumer",
+  "location": "Mumbai",
+  "phoneNo": "998877665"
+}
+
+### Insert a Consumer - valid
+POST http://localhost:9700/consumer
+Content-Type: application/json
+
+{
+  "name": "Dummy Consumer",
+  "location": "Mumbai",
+  "phoneNo": "9988776655"
+}
+
+### Update a Consumer - Invalid
+PUT http://localhost:9700/consumer
+Content-Type: application/json
+
+{
+
+  "consumerId": "100001",
+  "location": "Mumbai",
+  "phoneNo": "9988776655"
+}
+
+### Update a Consumer - valid
+PUT http://localhost:9700/consumer
+Content-Type: application/json
+
+{
+
+  "consumerId": 1000000,
+  "name": "Danial",
+  "location": "Mumbai",
+  "phoneNo": "9988776655"
+}
+
+

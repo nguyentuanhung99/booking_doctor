@@ -1,0 +1,12 @@
+server:
+  port: ${server_port:9700}
+spring:
+  profiles:
+    active: mysql
+  application:
+    name: customer-consumer-service
+eureka:
+  client:
+    serviceUrl:
+      # Changed because previous once was ausing errors with gateway
+      defaultZone: ${eureka_url:http://192.168.1.22:8761/eureka/}
