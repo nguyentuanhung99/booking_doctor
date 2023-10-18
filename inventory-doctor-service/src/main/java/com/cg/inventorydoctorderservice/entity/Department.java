@@ -30,6 +30,5 @@ public class Department {
     private Date created_at;
     
     private Date update_at;
-    
-    private Boolean status;
+
 }

@@ -1,19 +1,27 @@
 package com.cg.inventorypatientservice.controller;
 
 import lombok.AllArgsConstructor;
+
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.cg.inventorypatientservice.dto.LoginRequest;
 import com.cg.inventorypatientservice.dto.PatientRequest;
+import com.cg.inventorypatientservice.dto.ReviewRequest;
 import com.cg.inventorypatientservice.dto.updatePatientRequest;
+import com.cg.inventorypatientservice.entity.UpdatePassWordPriciple;
 import com.cg.inventorypatientservice.exception.ResponseObject;
 import com.cg.inventorypatientservice.service.PatientService;
 
+import java.security.Principal;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping({"/patient"})
+@RequestMapping({"patient"})
 @AllArgsConstructor
 public class PatientController {
     private final PatientService patientService;
@@ -44,13 +52,13 @@ public class PatientController {
     }
 
 
-    @PostMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/register", consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
     ResponseEntity<?> insertPatient(@RequestPart("patient") @Valid PatientRequest patientRequest) {
         return ResponseObject.createSuccess(patientService.createPatient(patientRequest));
     }
 
-    @PutMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE,
+    @PutMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
     ResponseEntity<?> updatePatient(@RequestPart("patient") @Valid updatePatientRequest updatePatientRequest) {
         return ResponseObject.createSuccess(patientService.update(updatePatientRequest));
@@ -62,6 +70,32 @@ public class PatientController {
     ResponseEntity<?> removePatient(@PathVariable("id") Integer id) {
     	patientService.delete(id);
         return ResponseObject.success(id);
+    }
+
+    @PostMapping(value = "/signin", consumes = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<?> authenticateUser(@RequestPart("patient") @Valid LoginRequest loginRequest) {
+
+    	return ResponseObject.createSuccess(patientService.signin(loginRequest.getUsername(),loginRequest.getPassword()));
+    }
+    
+    @GetMapping({"/myPatient"})
+    @ResponseBody
+    ResponseEntity<?> getUserByPricipal(Principal principal) {
+        return ResponseObject.success(patientService.getPrinciple(principal));
+    }
+    
+    @GetMapping({"/create-review"})
+    @ResponseBody
+    ResponseEntity<?> createReview(Principal principal, @RequestPart("review") @Valid ReviewRequest reviewRequest , @RequestPart("idDoctor") @Valid Integer idDoctor ) {
+        return ResponseObject.success(patientService.createReview(principal,reviewRequest,idDoctor));
+    }
+    
+    @PutMapping(value = "/change-password", consumes = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ResponseBody
+    ResponseEntity<?> updatePasswordByPricipal(Principal principal,@RequestPart("doctor") @Valid UpdatePassWordPriciple updatePassWordPriciple) {
+        return ResponseObject.success(patientService.updatePassword(principal,updatePassWordPriciple));
     }
 
 }

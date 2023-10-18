@@ -6,7 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,8 +26,9 @@ public class Patient {
     private String firstName;
 
     private String lastName;
-
-    private String Role;
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    List<AppUserRole> appUserRoles;
 
     private Date dateOfBirth;
 
@@ -38,6 +42,10 @@ public class Patient {
 
     private Boolean status;
 
+    @NotNull
+    private String username;
+    
+    @NotNull
     private String password;
 
     private String avatar;

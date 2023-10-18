@@ -1,6 +1,18 @@
 package com.cg.inventorydoctorderservice.dto;
 
 import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+
+import com.cg.inventorydoctorderservice.entity.AppUserRole;
+import com.cg.inventorydoctorderservice.service.utils.StringListConverter;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,39 +23,60 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class updateDoctorRequest {
 	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String firstName;
 
     private String lastName;
 
-    private String Role;
-
     private Date dateOfBirth;
 
+    private String description;
+    
     private String gender;
 
     private String email;
 
     private String phoneNumber;
-
-    private String address;
-
-    private Boolean status;
+    
+    private String username;
 
     private String password;
 
     private String avatar;
 
-    private String biography;    
+    private Integer specialityId;    
     
-    private String serviceName;
+    private String address;
     
     private Integer departmentId;
+   
+    private Integer price;
     
-    private String specialization;
+    private List<String> serviceName;
+    
+    private List<String> specialization;
+    
+    @Lob
+    @Convert(converter = StringListConverter.class)
+    private List<String> education;
+    
+    @Lob
+    @Convert(converter = StringListConverter.class)
+    private List<String> experience;
+    
+    @Lob
+    @Convert(converter = StringListConverter.class)
+    private List<String> awards;  
     
     private Date created_at;
     
     private Date update_at;
+    
+    private Boolean status;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    List<AppUserRole> appUserRoles;
 }

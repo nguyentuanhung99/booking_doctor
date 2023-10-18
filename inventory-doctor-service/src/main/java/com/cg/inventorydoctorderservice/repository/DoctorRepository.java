@@ -12,4 +12,8 @@ import com.cg.inventorydoctorderservice.entity.Doctor;
 public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
     Page<Doctor> findAll(Specification<Doctor> doctorSpecification, Pageable pageable);
+
+	Doctor findByUsername(String username);
+	
+	boolean existsByUsername(String username);
 }

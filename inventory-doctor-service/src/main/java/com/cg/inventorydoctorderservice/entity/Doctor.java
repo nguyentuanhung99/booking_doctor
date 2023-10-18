@@ -6,7 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+import org.springframework.security.core.GrantedAuthority;
+
+import com.cg.inventorydoctorderservice.service.utils.IntegerListConverter;
+import com.cg.inventorydoctorderservice.service.utils.StringListConverter;
+
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,8 +30,8 @@ public class Doctor {
     private String firstName;
 
     private String lastName;
-
-    private String Role;
+    
+    private String description;
 
     private Date dateOfBirth;
 
@@ -33,28 +40,47 @@ public class Doctor {
     private String email;
 
     private String phoneNumber;
-
-    private String address;
-
-    private Boolean status;
+    
+    private String username;
 
     private String password;
 
     private String avatar;
 
-    private String biography;    
+    private Integer specialityId;    
     
-    private String serviceName;
+    private String address;
     
     private Integer departmentId;
+   
+    private Integer price;
+    @Lob
+    @Convert(converter = StringListConverter.class)
+    private List<String> serviceName;
+    @Lob
+    @Convert(converter = StringListConverter.class)
+    private List<String> specialization;
     
-    private String specialization;
+    @Lob
+    @Convert(converter = IntegerListConverter.class)
+    private List<Integer> education;
     
-    private Date booking_time;
+    @Lob
+    @Convert(converter = IntegerListConverter.class)
+    private List<Integer> experience;
+    
+    @Lob
+    @Convert(converter = IntegerListConverter.class)
+    private List<Integer> awards;  
     
     private Date created_at;
     
     private Date update_at;
+    
+    private Boolean status;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    List<AppUserRole> appUserRoles;
       
 }
 
