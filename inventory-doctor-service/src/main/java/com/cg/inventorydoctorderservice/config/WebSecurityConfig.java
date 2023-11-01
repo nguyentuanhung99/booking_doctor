@@ -1,9 +1,14 @@
 package com.cg.inventorydoctorderservice.config;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.reactive.function.client.WebClientCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.CacheControl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,6 +50,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // Entry points
     http.authorizeRequests()//
         .antMatchers("/doctor/signin").permitAll()//
+        .antMatchers("/doctor/getDetailDoctor/**").permitAll()//
+        .antMatchers("/doctor/filter").permitAll()//
         .antMatchers("/doctor/register").permitAll()//
         .antMatchers("/doctor/login").permitAll()//
         .antMatchers("/doctor/getDetailEducation/**/**").permitAll()//
@@ -53,6 +60,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/h2-console/**/**").permitAll()
         .antMatchers("/doctor/myDoctor").access("hasRole('DOCTOR')")
         .antMatchers("/doctor/update-myself").access("hasRole('DOCTOR')")
+        .antMatchers("/doctor/view-picture").access("hasRole('DOCTOR')")
+        .antMatchers("/img/**").permitAll()
         // Disallow everything else..
         .anyRequest().authenticated();
 
@@ -92,5 +101,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
   }
+  
+
+  
+
 
 }

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://172.20.10.2:3306/booking_doctor?serverTimezone=UTC
+    url: jdbc:mysql://192.168.0.110:3306/booking_doctor?serverTimezone=UTC
     username: booking_doctor
     password: It123456!
     # Enables execution of data-mysql.sql script
@@ -12,6 +12,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
 logging:
   level:
     # info level for all java logs

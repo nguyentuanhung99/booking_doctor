@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.cg.inventoryauthservice.entity.AppUserRole;
 import com.cg.inventoryauthservice.service.JwtTokenFilterConfigurer;
@@ -24,62 +25,68 @@ import com.cg.inventoryauthservice.service.JwtTokenProvider;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private final JwtTokenProvider jwtTokenProvider;
+	private final JwtTokenProvider jwtTokenProvider;
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+	@Autowired
+	private CorsConfigurationSource corsConfigurationSource;
 
-    // Disable CSRF (cross site request forgery)
-    http.csrf().disable();
-    // No session will be created or used by spring security
-    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
 
-    // Entry points
-    http.authorizeRequests()//
-        .antMatchers("/users/signin").permitAll()//
-        .antMatchers("/users/signup").permitAll()//
-        .antMatchers("/users/register").permitAll()//
-        .antMatchers("/users/login").permitAll()//
-        .antMatchers("/h2-console/**/**").permitAll()
-        .antMatchers("/users/myUser").access("hasRole('CLIENT')")
-        // Disallow everything else..
-        .anyRequest().authenticated();
+		// Disable CSRF (cross site request forgery)
+		http.csrf().disable();
 
-    // If a user try to access a resource without having enough permissions
-    http.exceptionHandling().accessDeniedPage("/login");
+		// config cors spring security
+		http.cors().configurationSource(corsConfigurationSource);
 
-    // Apply JWT
-    http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
+		// No session will be created or used by spring security
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-    // Optional, if you want to test the API from a browser
-    // http.httpBasic();
-  }
+		// Entry points
+		http.authorizeRequests()//
+				.antMatchers("/admin/signin").permitAll()//
+				.antMatchers("/admin/signup").permitAll()//
+				.antMatchers("/admin/register").permitAll()//
+				.antMatchers("/admin/login").permitAll()//
+				.antMatchers("/h2-console/**/**").permitAll()
+				// Disallow everything else..
+				.anyRequest().authenticated();
 
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-    // Allow swagger to be accessed without authentication
-    web.ignoring().antMatchers("/v2/api-docs")//
-        .antMatchers("/swagger-resources/**")//
-        .antMatchers("/swagger-ui.html")//
-        .antMatchers("/configuration/**")//
-        .antMatchers("/webjars/**")//
-        .antMatchers("/public")
-        
-        // Un-secure H2 Database (for testing purposes, H2 console shouldn't be unprotected in production)
-        .and()
-        .ignoring()
-        .antMatchers("/h2-console/**/**");;
-  }
+		// If a user try to access a resource without having enough permissions
+		http.exceptionHandling().accessDeniedPage("/login");
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(12);
-  }
+		// Apply JWT
+		http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
 
-  @Override
-  @Bean
-  public AuthenticationManager authenticationManagerBean() throws Exception {
-    return super.authenticationManagerBean();
-  }
+		// Optional, if you want to test the API from a browser
+		// http.httpBasic();
+	}
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		// Allow swagger to be accessed without authentication
+		web.ignoring().antMatchers("/v2/api-docs")//
+				.antMatchers("/swagger-resources/**")//
+				.antMatchers("/swagger-ui.html")//
+				.antMatchers("/configuration/**")//
+				.antMatchers("/webjars/**")//
+				.antMatchers("/public")
+
+				// Un-secure H2 Database (for testing purposes, H2 console shouldn't be
+				// unprotected in production)
+				.and().ignoring().antMatchers("/h2-console/**/**");
+		;
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder(12);
+	}
+
+	@Override
+	@Bean
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
 
 }

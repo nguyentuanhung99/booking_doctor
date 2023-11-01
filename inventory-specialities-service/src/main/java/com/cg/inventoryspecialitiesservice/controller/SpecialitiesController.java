@@ -61,8 +61,8 @@ public class SpecialitiesController {
 
     @PostMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
-    ResponseEntity<?> insertSpecialities(@RequestPart("Specialities") @Valid SpecialitiesRequest SpecialitiesRequest) {
-        return ResponseObject.createSuccess(specialitiesService.createSpecialities(SpecialitiesRequest));
+    ResponseEntity<?> insertSpecialities(@RequestPart("Specialities") @Valid SpecialitiesRequest specialitiesRequest,@RequestPart("file") MultipartFile file) {
+        return ResponseObject.createSuccess(specialitiesService.createSpecialities(specialitiesRequest,file));
     }
 
     @PutMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE,

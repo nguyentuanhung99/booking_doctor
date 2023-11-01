@@ -18,11 +18,11 @@ import com.cg.inventoryauthservice.service.utils.StringListConverter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tbl_user")
+@Table(name = "admin")
 @Data
 @Entity
 @Builder
-public class User {
+public class Admin {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,22 +31,11 @@ public class User {
     private String username;
 
     private String email;
-
+    
     private String password;
 
-    private String firstName;
-
-    private String lastName;
-
-    private String fullName;
-
-    private String avatar;
 
     @ElementCollection(fetch = FetchType.EAGER)
     List<AppUserRole> appUserRoles;
 
-	public Long getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

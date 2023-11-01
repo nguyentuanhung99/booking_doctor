@@ -14,11 +14,12 @@ public class SpecificationFilter {
 	public Specification<Doctor> doctorSpecification(String name, String gender) {
         return (root, cq, cb) -> {
             Predicate p = cb.conjunction();
-
+         
             if (!StringUtils.isEmpty(name)) {
-                p = cb.and(p, cb.like(root.get("name"), "%" + name + "%"));
+                p = cb.and(p, cb.like(root.get("lastName"), "%" + name + "%"));
 
             }
+            
             if (!StringUtils.isEmpty(gender)) {
                 p = cb.and(p, cb.equal(root.get("gender"), "%" + gender + "%"));
             }

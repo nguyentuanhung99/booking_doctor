@@ -32,8 +32,6 @@ public class updatePatientRequest {
     private Boolean status;
 
     private String password;
-
-    private String avatar;
    
     private Date created_at;
     

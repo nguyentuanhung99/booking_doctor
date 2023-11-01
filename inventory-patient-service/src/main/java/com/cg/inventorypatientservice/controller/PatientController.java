@@ -2,19 +2,24 @@ package com.cg.inventorypatientservice.controller;
 
 import lombok.AllArgsConstructor;
 
-
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.cg.inventorypatientservice.dto.AppointmentRequest;
 import com.cg.inventorypatientservice.dto.LoginRequest;
 import com.cg.inventorypatientservice.dto.PatientRequest;
 import com.cg.inventorypatientservice.dto.ReviewRequest;
+import com.cg.inventorypatientservice.dto.UpdateAppointmentRequest;
 import com.cg.inventorypatientservice.dto.updatePatientRequest;
 import com.cg.inventorypatientservice.entity.UpdatePassWordPriciple;
 import com.cg.inventorypatientservice.exception.ResponseObject;
 import com.cg.inventorypatientservice.service.PatientService;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 
 import javax.validation.Valid;
@@ -29,6 +34,7 @@ public class PatientController {
 
     @GetMapping("/filter")
     ResponseEntity<?> filter(
+    		
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "gender", required = false) String gender,
             @RequestParam(name = "size", defaultValue = "10") int size,
@@ -38,11 +44,28 @@ public class PatientController {
     ) {
         return ResponseObject.success(patientService.filter(name,gender, size, page, desc, orderBy));
     }
+    
+    @GetMapping("/view-myApointment")
+    ResponseEntity<?> viewAppointment(
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "1") @Min(value = 1, message = "k tim thay trang") int page,
+            @RequestParam(name = "desc", defaultValue = "true") boolean desc,
+            @RequestParam(name = "orderBy", defaultValue = "id") String orderBy,
+            Principal principal
+    ) {
+        return ResponseObject.success(patientService.viewMyAppointment( principal, size, page, desc, orderBy));
+    }
 
     @GetMapping({"/{id}"})
     @ResponseBody
     ResponseEntity<?> getPatientById(@PathVariable("id") Integer id) {
         return ResponseObject.success(patientService.getDetailPatient(id));
+    }
+    
+    @GetMapping({"/get-appointment/{id}"})
+    @ResponseBody
+    ResponseEntity<?> getAppointmentById(@PathVariable("id") Integer id) {
+        return ResponseObject.success(patientService.getDetailAppointment(id));
     }
 
     @GetMapping({"/all"})
@@ -60,15 +83,28 @@ public class PatientController {
 
     @PutMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
-    ResponseEntity<?> updatePatient(@RequestPart("patient") @Valid updatePatientRequest updatePatientRequest) {
-        return ResponseObject.createSuccess(patientService.update(updatePatientRequest));
+    ResponseEntity<?> updatePatient(@RequestPart("patient") @Valid updatePatientRequest updatePatientRequest,@RequestPart("file") MultipartFile file) {
+        return ResponseObject.createSuccess(patientService.update(updatePatientRequest,file));
     }
     
 
-    @DeleteMapping({"/{id}"})
+    @PutMapping(value = "/update-appointment", consumes = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE})
+    ResponseEntity<?> updateAppointment(@RequestPart("appointment") @Valid UpdateAppointmentRequest updateAppointmentRequest) {
+        return ResponseObject.createSuccess(patientService.updateAppointment(updateAppointmentRequest));
+    }
+    
+    @DeleteMapping({"/delete-patient/{id}"})
     @ResponseBody
     ResponseEntity<?> removePatient(@PathVariable("id") Integer id) {
     	patientService.delete(id);
+        return ResponseObject.success(id);
+    }
+    
+    @DeleteMapping({"/delete-appointment/{id}"})
+    @ResponseBody
+    ResponseEntity<?> removeAppointment(@PathVariable("id") Integer id) {
+    	patientService.deleteAppointment(id);
         return ResponseObject.success(id);
     }
 
@@ -85,10 +121,39 @@ public class PatientController {
         return ResponseObject.success(patientService.getPrinciple(principal));
     }
     
-    @GetMapping({"/create-review"})
+    @PostMapping({"/create-review"})
     @ResponseBody
     ResponseEntity<?> createReview(Principal principal, @RequestPart("review") @Valid ReviewRequest reviewRequest , @RequestPart("idDoctor") @Valid Integer idDoctor ) {
         return ResponseObject.success(patientService.createReview(principal,reviewRequest,idDoctor));
+    }
+    
+    @DeleteMapping({"/delete-review/{id}"})
+    @ResponseBody
+    ResponseEntity<?> removeReview(@PathVariable("id") Integer id) {
+    	patientService.deleteReview(id);
+        return ResponseObject.success(id);
+    }
+    
+
+    
+    @GetMapping("/filter-review")
+    ResponseEntity<?> filterReview(
+    		
+            @RequestParam(name = "idPatient", required = false) Integer idPatient,
+            @RequestParam(name = "idDoctor", required = false) Integer idDoctor,
+            @RequestParam(name = "idReview", required = false) Integer idReview,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "1") @Min(value = 1, message = "k tim thay trang") int page,
+            @RequestParam(name = "desc", defaultValue = "true") boolean desc,
+            @RequestParam(name = "orderBy", defaultValue = "id") String orderBy
+    ) {
+        return ResponseObject.success(patientService.filterReview(idPatient,idDoctor,idReview, size, page, desc, orderBy));
+    }
+    
+    @PostMapping({"/create-appointment"})
+    @ResponseBody
+    ResponseEntity<?> createAppointment(Principal principal, @RequestPart("appointment") @Valid AppointmentRequest appointmentRequest , @RequestPart("idDoctor") @Valid Integer idDoctor ) {
+        return ResponseObject.success(patientService.createAppointment(principal,appointmentRequest,idDoctor));
     }
     
     @PutMapping(value = "/change-password", consumes = {MediaType.APPLICATION_JSON_VALUE,
@@ -97,6 +162,7 @@ public class PatientController {
     ResponseEntity<?> updatePasswordByPricipal(Principal principal,@RequestPart("doctor") @Valid UpdatePassWordPriciple updatePassWordPriciple) {
         return ResponseObject.success(patientService.updatePassword(principal,updatePassWordPriciple));
     }
+
 
 }
 

@@ -9,9 +9,115 @@ package com.cg.inventorydoctorderservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 
-@SpringBootApplication()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import com.cg.inventorydoctorderservice.repository.DoctorRepository;
+
+@SpringBootApplication
+@EnableJpaRepositories(basePackageClasses = DoctorRepository.class)
 public class InventoryDoctorServiceApplication {
 
 	public static void main(String[] args) {

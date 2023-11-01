@@ -2,8 +2,11 @@ package com.cg.inventorydoctorderservice.controller;
 
 import lombok.AllArgsConstructor;
 
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +18,8 @@ import com.cg.inventorydoctorderservice.dto.updateDoctorRequest;
 import com.cg.inventorydoctorderservice.exception.ResponseObject;
 import com.cg.inventorydoctorderservice.service.DoctorService;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 
 import javax.validation.Valid;
@@ -111,8 +116,15 @@ public class DoctorController {
     @PostMapping(value = "/update-myself", consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseBody
-    ResponseEntity<?> updateUserByPricipal(Principal principal,@RequestPart("doctor") @Valid UpdateDoctorRequestPriciple updateDoctorRequestPriciple,  @RequestPart("file") MultipartFile file) {
-        return ResponseObject.success(doctorService.updatePrinciple(principal,updateDoctorRequestPriciple,file));
+    ResponseEntity<?> updateUserByPricipal(Principal principal,@RequestPart("doctor") @Valid UpdateDoctorRequestPriciple updateDoctorRequestPriciple) throws IOException {
+        return ResponseObject.success(doctorService.updatePrinciple(principal,updateDoctorRequestPriciple));
+    }
+    
+    @PostMapping(value = "/view-picture", consumes = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE})
+    @ResponseBody
+    ResponseEntity<?> viewPicture(Principal principal , @RequestPart("file") MultipartFile file) throws IOException {
+        return ResponseObject.success(doctorService.viewPicture(principal,file));
     }
     
     @PutMapping(value = "/change-password", consumes = {MediaType.APPLICATION_JSON_VALUE,
@@ -121,6 +133,15 @@ public class DoctorController {
     ResponseEntity<?> updatePasswordByPricipal(Principal principal,@RequestPart("doctor") @Valid UpdatePassWordPriciple updatePassWordPriciple) {
         return ResponseObject.success(doctorService.updatePassword(principal,updatePassWordPriciple));
     }
-
+    
+//    @GetMapping(value = "/image")
+//    public @ResponseBody ResponseEntity<byte[]> getImage() throws IOException {
+//    	
+//    	ClassPathResource imageFile = new ClassPathResource("C:\\Users\\Admin\\Documents\\GitHub\\booking_doctor\\inventory-gateway-server\\src\\main\\java\\com\\cg\\inventorygatewayserver\\img\\1696099230986.jpeg");
+//
+//		byte[] imageBytes = StreamUtils.copyToByteArray(imageFile.getInputStream());
+//
+//		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageBytes);
+//    }
 }
 

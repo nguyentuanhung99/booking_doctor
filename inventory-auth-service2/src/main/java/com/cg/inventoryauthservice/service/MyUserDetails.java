@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.cg.inventoryauthservice.entity.User;
+import com.cg.inventoryauthservice.entity.Admin;
 
 
 @Service
@@ -17,7 +17,7 @@ public class MyUserDetails implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    final User appUser = userRepository.findByUsername(username);
+    final Admin appUser = userRepository.findByUsername(username);
 
     if (appUser == null) {
       throw new UsernameNotFoundException("User '" + username + "' not found");

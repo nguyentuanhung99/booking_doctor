@@ -1,8 +1,11 @@
 package com.cg.inventorydoctorderservice.service;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +18,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cg.inventorydoctorderservice.config.FileUtils;
 import com.cg.inventorydoctorderservice.dto.DoctorRequest;
 import com.cg.inventorydoctorderservice.dto.UpdateDoctorRequestPriciple;
 import com.cg.inventorydoctorderservice.dto.UpdatePassWordPriciple;
@@ -30,6 +34,7 @@ import com.cg.inventorydoctorderservice.repository.DepartmentRepository;
 import com.cg.inventorydoctorderservice.repository.DoctorRepository;
 import com.cg.inventorydoctorderservice.repository.EducationRepository;
 import com.cg.inventorydoctorderservice.repository.ExperienceRepository;
+import com.cg.inventorydoctorderservice.repository.SpecialitiesRepository;
 import com.cg.inventorydoctorderservice.service.utils.ListResult;
 import com.cg.inventorydoctorderservice.service.utils.SpecificationFilter;
 
@@ -43,11 +48,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static  com.cg.inventorydoctorderservice.service.utils.PageableUtils.pageable;
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Transactional
+@Slf4j
 public class DoctorService {
     private final DoctorRepository doctorRepository;
+    
+    private final SpecialitiesRepository specialitiesRepository;
+    
+    private final HttpServletRequest request;
     
     private final DepartmentRepository departmentRepository;
     
@@ -69,6 +82,9 @@ public class DoctorService {
         return doctorRepository.findAll();
     }
 
+    @Value("${image.location}")
+    private String location;
+
 	@Transactional
 	public Doctor createDoctor(DoctorRequest doctorRequest) {
 
@@ -87,7 +103,9 @@ public class DoctorService {
 			departmentRepository.findById(doctorRequest.getDepartmentId())
 					.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Khong tim thay"));
 			doctors.setDepartmentId(doctorRequest.getDepartmentId());
-			doctors.setAvatar(doctorRequest.getAvatar());
+			
+			specialitiesRepository.findById(doctorRequest.getSpecialityId()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Khong tim thay"));
+			doctors.setSpecialityId(doctorRequest.getSpecialityId());
 			doctors.setServiceName(doctorRequest.getServiceName());
 			doctors.setSpecialization(doctorRequest.getSpecialization());
 			doctors.setCreated_at(asDate(LocalDate.now()));
@@ -118,8 +136,12 @@ public class DoctorService {
         doctorUpdate.setPhoneNumber(updatedoctorRequest.getPhoneNumber());
         doctorUpdate.setAddress(updatedoctorRequest.getAddress());
         doctorUpdate.setAvatar(updatedoctorRequest.getAvatar());
-        departmentRepository.findById(updatedoctorRequest.getDepartmentId()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Khong tim thay"));       
+        departmentRepository.findById(updatedoctorRequest.getDepartmentId()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Khong tim thay"));
         doctorUpdate.setDepartmentId(updatedoctorRequest.getDepartmentId());
+        
+		specialitiesRepository.findById(updatedoctorRequest.getSpecialityId()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Khong tim thay"));
+		doctorUpdate.setSpecialityId(updatedoctorRequest.getSpecialityId());
+
         doctorUpdate.setAvatar(updatedoctorRequest.getAvatar());
         doctorUpdate.setServiceName(updatedoctorRequest.getServiceName());
         doctorUpdate.setSpecialization(updatedoctorRequest.getSpecialization());
@@ -168,7 +190,7 @@ public class DoctorService {
 		}
 	}
 
-	public Doctor updatePrinciple(Principal principal, UpdateDoctorRequestPriciple updateDoctorRequestPriciple,MultipartFile file) {
+	public Doctor updatePrinciple(Principal principal, UpdateDoctorRequestPriciple updateDoctorRequestPriciple) throws IOException {
 		Doctor doctorUpdate = doctorRepository.findByUsername(principal.getName());
         doctorUpdate.setFirstName(updateDoctorRequestPriciple.getFirstName());
         doctorUpdate.setLastName(updateDoctorRequestPriciple.getLastName());
@@ -186,17 +208,23 @@ public class DoctorService {
 		updateAwards(updateDoctorRequestPriciple, doctorUpdate);
         doctorUpdate.setUpdate_at(asDate(LocalDate.now()));
         
-        String fileName = file.getOriginalFilename();
-        try {
-            FileCopyUtils.copy(file.getBytes(), new File("C:\\Users\\Admin\\Documents\\GitHub\\booking_doctor\\inventory-gateway-server\\src\\main\\java\\com\\cg\\inventorygatewayserver\\img\\" + fileName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        doctorUpdate.setAvatar(fileName);
+        departmentRepository.findById(updateDoctorRequestPriciple.getDepartmentId()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Khong tim thay"));
+        doctorUpdate.setDepartmentId(updateDoctorRequestPriciple.getDepartmentId());
+        
+		specialitiesRepository.findById(updateDoctorRequestPriciple.getSpecialityId()).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Khong tim thay"));
+		doctorUpdate.setSpecialityId(updateDoctorRequestPriciple.getSpecialityId());
+//        String fileName = file.getOriginalFilename();
+//        try {
+//            FileCopyUtils.copy(file.getBytes(), new File(this.location + fileName));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        doctorUpdate.setAvatar(fileName);
+////        doctorUpdate.setAvatar(FileUtils.saveAvatar(file, this.location, request));
         doctorRepository.save(doctorUpdate);
 		return doctorUpdate;
 	}
-
+	 
 	private void updateAwards(UpdateDoctorRequestPriciple updateDoctorRequestPriciple, Doctor doctorUpdate) {
 		List<Awards> awardsOlds = awardsRepository.findAllByIdDoctor(doctorUpdate.getId());
 			doctorUpdate.setAwards(null);
@@ -271,6 +299,17 @@ public class DoctorService {
         return experienceRepository.findById(id).orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "Khong tim thay"));
     }
     
+    public Doctor viewPicture(Principal principal,MultipartFile file) {
+		Doctor doctorUpdate = doctorRepository.findByUsername(principal.getName());
+        String fileName = file.getOriginalFilename();
+        try {
+            FileCopyUtils.copy(file.getBytes(), new File(this.location + fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        doctorUpdate.setAvatar(fileName);
+		return doctorUpdate;
+    }
     
 	public String updatePassword(Principal principal, UpdatePassWordPriciple updatePassWordPriciple) {
 		Doctor doctorUpdate = doctorRepository.findByUsername(principal.getName());
@@ -278,12 +317,12 @@ public class DoctorService {
 			if (updatePassWordPriciple.getNewPassword().equals(updatePassWordPriciple.getRepeatNewPassword()) ) {
 				doctorUpdate.setPassword(passwordEncoder.encode(updatePassWordPriciple.getNewPassword()));
 				doctorRepository.save(doctorUpdate);
-				return " Mat khau cua ban da duoc thay doi";
+				return " Mật khẩu của bạn đã được thay đổi";
 			} else {
-				throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Vui long nhap lai mat khau");
+				throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Vui lòng nhập lại mật khẩu");
 			}
 		} else {
-			throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Mau Khau hien tai cua ban khong  dung, vui long nhap lai");
+			throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "Mật khẩu hiện tại của bạn không đúng, Vui lòng nhập lại");
 		}
 	}
 }

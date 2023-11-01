@@ -16,3 +16,6 @@ security:
     token:
       secret-key: secret-key-nguyen-tuan-hung-dep-trai-vai
       expire-length: 30000000 # 5 minutes duration by default: 5 minutes * 60 seconds * 1000 miliseconds
+
+image:
+     location: C:\Users\Admin\Documents\GitHub\booking_doctor\inventory-doctor-service\img\

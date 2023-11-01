@@ -33,7 +33,8 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping({"/users"})
+@CrossOrigin
+@RequestMapping({"/admin"})
 @AllArgsConstructor
 public class BaseController {
 
@@ -42,14 +43,14 @@ public class BaseController {
     @CrossOrigin
     @PostMapping(value = "/register", consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
-    ResponseEntity<?> insertPatient(@RequestPart("patient") @Valid RegisterRequest registerRequest) {
+    ResponseEntity<?> insertPatient(@RequestPart("admin") @Valid RegisterRequest registerRequest) {
         return ResponseObject.createSuccess(userService.signup(registerRequest));
     }
     
     @CrossOrigin
     @PostMapping(value = "/signin", consumes = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<?> authenticateUser(@RequestPart("patient") @Valid LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@RequestPart("admin") @Valid LoginRequest loginRequest) {
 
     	return ResponseObject.createSuccess(userService.signin(loginRequest.getUsername(),loginRequest.getPassword()));
     }
@@ -61,6 +62,7 @@ public class BaseController {
         return ResponseObject.success(userService.getPrinciple(principal));
     }
 
+    
 
 
 }

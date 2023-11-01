@@ -2,9 +2,9 @@ package com.cg.inventoryauthservice.dto.request;
 
 import javax.persistence.Entity;
 
-import com.cg.inventoryauthservice.entity.User;
+import com.cg.inventoryauthservice.entity.Admin;
 
 @Entity
-public class RegisterRequest  extends User{
+public class RegisterRequest  extends Admin{
 
 }

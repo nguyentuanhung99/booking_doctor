@@ -13,7 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "Patient")
+@Table(name = "Review")
 @Data
 @Entity
 @Builder
@@ -23,15 +23,21 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Star star;
+    private Integer star;
     
     private String title;
     
     private String description;
     
+    private String namePatient;
+    
     private Integer idPatient;
     
     private Integer idDoctor;
+    
+    private Integer idReview;
+    
+    private Date created_at;
       
 }
 

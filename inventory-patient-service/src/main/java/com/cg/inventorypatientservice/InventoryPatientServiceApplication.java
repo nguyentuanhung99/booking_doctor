@@ -10,8 +10,12 @@ package com.cg.inventorypatientservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import com.cg.inventorypatientservice.repository.PatientRepository;
 
 @SpringBootApplication()
+@EnableJpaRepositories(basePackageClasses = PatientRepository.class)
 public class InventoryPatientServiceApplication {
 
 	public static void main(String[] args) {

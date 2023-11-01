@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/h2-console/**/**").permitAll()
         .antMatchers("/patient/myUser").access("hasRole('CLIENT')")
         .antMatchers("/patient/create-review").access("hasRole('CLIENT')")
-        
+        .antMatchers("/patient/login").permitAll()//
         // Disallow everything else..
         .anyRequest().authenticated();
 
