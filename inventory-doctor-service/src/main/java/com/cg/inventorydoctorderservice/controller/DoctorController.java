@@ -12,11 +12,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cg.inventorydoctorderservice.dto.DoctorRequest;
 import com.cg.inventorydoctorderservice.dto.LoginRequest;
+import com.cg.inventorydoctorderservice.dto.UpdateAppointmentRequest;
 import com.cg.inventorydoctorderservice.dto.UpdateDoctorRequestPriciple;
 import com.cg.inventorydoctorderservice.dto.UpdatePassWordPriciple;
+import com.cg.inventorydoctorderservice.dto.UpdatePrescriptionAppointmentRequest;
 import com.cg.inventorydoctorderservice.dto.updateDoctorRequest;
 import com.cg.inventorydoctorderservice.exception.ResponseObject;
 import com.cg.inventorydoctorderservice.service.DoctorService;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,12 +39,14 @@ public class DoctorController {
     ResponseEntity<?> filter(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "gender", required = false) String gender,
+            @RequestParam(name = "departmentId", defaultValue = "0") Integer departmentId,
+            @RequestParam(name = "specialityId", defaultValue = "0") Integer specialityId,            
             @RequestParam(name = "size", defaultValue = "10") int size,
             @RequestParam(name = "page", defaultValue = "1") @Min(value = 1, message = "k tim thay trang") int page,
             @RequestParam(name = "desc", defaultValue = "true") boolean desc,
             @RequestParam(name = "orderBy", defaultValue = "id") String orderBy
     ) {
-        return ResponseObject.success(doctorService.filter(name,gender, size, page, desc, orderBy));
+        return ResponseObject.success(doctorService.filter(name,gender,departmentId,specialityId, size, page, desc, orderBy));
     }
 
     @GetMapping({"getDetailDoctor/{id}"})
@@ -66,6 +71,12 @@ public class DoctorController {
     @ResponseBody
     ResponseEntity<?> getAwardsById(@PathVariable("id") Integer id) {
         return ResponseObject.success(doctorService.getDetailAwards(id));
+    }
+    
+    @GetMapping({"getDetailAppointment/{id}"})
+    @ResponseBody
+    ResponseEntity<?> getDetailAppointmentById(@PathVariable("id") Integer id) {
+        return ResponseObject.success(doctorService.getDetailAppointment(id));
     }
 
     @GetMapping({"/all"})
@@ -132,6 +143,63 @@ public class DoctorController {
     @ResponseBody
     ResponseEntity<?> updatePasswordByPricipal(Principal principal,@RequestPart("doctor") @Valid UpdatePassWordPriciple updatePassWordPriciple) {
         return ResponseObject.success(doctorService.updatePassword(principal,updatePassWordPriciple));
+    }
+    
+    @GetMapping("/filter-review")
+    ResponseEntity<?> filterReview(
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "1") @Min(value = 1, message = "k tim thay trang") int page,
+            @RequestParam(name = "desc", defaultValue = "true") boolean desc,
+            @RequestParam(name = "orderBy", defaultValue = "id") String orderBy,
+    		Principal principal
+    ) {
+        return ResponseObject.success(doctorService.filterReview(principal, size, page, desc, orderBy));
+    }
+    
+    @GetMapping("/view-myApointment")
+    ResponseEntity<?> viewAppointment(
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "1") @Min(value = 1, message = "k tim thay trang") int page,
+            @RequestParam(name = "desc", defaultValue = "true") boolean desc,
+            @RequestParam(name = "orderBy", defaultValue = "id") String orderBy,
+            Principal principal
+    ) {
+        return ResponseObject.success(doctorService.viewMyAppointment( principal, size, page, desc, orderBy));
+    }
+    
+    
+    @PutMapping(value = "/update-status", consumes = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE})
+    ResponseEntity<?> updateAppointment(@RequestPart("appointment") @Valid UpdateAppointmentRequest updateAppointmentRequest) {
+        return ResponseObject.createSuccess(doctorService.updateStatusAppointment(updateAppointmentRequest));
+    }
+    
+    @PutMapping(value = "/update-prescription", consumes = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE})
+    ResponseEntity<?> updatePrescription(@RequestPart("appointment") @Valid UpdatePrescriptionAppointmentRequest updatePrescriptionAppointmentRequest) {
+        return ResponseObject.createSuccess(doctorService.updatePrescriptionAppointment(updatePrescriptionAppointmentRequest));
+    }
+    
+    @GetMapping("/findbyId")
+    ResponseEntity<?> viewAppointment(
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "1") @Min(value = 1, message = "k tim thay trang") int page,
+            @RequestParam(name = "desc", defaultValue = "true") boolean desc,
+            @RequestParam(name = "orderBy", defaultValue = "id") String orderBy,
+            @RequestParam(name = "id") Integer id
+    ) {
+        return ResponseObject.success(doctorService.findAppointmentById( id, size, page, desc, orderBy));
+    }
+    
+    @GetMapping("/findbyIdDictinct")
+    ResponseEntity<?> viewAppointmentDictinct(
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "page", defaultValue = "1") @Min(value = 1, message = "k tim thay trang") int page,
+            @RequestParam(name = "desc", defaultValue = "true") boolean desc,
+            @RequestParam(name = "orderBy", defaultValue = "id") String orderBy,
+            Principal principal
+    ) {
+        return ResponseObject.success(doctorService.findAppointmentDictinctById( principal, size, page, desc, orderBy));
     }
     
 //    @GetMapping(value = "/image")

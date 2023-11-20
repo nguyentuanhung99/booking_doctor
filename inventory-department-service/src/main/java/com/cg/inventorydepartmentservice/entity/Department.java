@@ -29,6 +29,8 @@ public class Department {
     
     private String address;
     
+    private String image;
+    
     private Date created_at;
     
     private Date update_at;

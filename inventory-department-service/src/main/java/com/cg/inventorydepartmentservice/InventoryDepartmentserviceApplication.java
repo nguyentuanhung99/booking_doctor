@@ -10,8 +10,13 @@ package com.cg.inventorydepartmentservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import com.cg.inventorydepartmentservice.repository.DepartmentRepository;
+
 
 @SpringBootApplication()
+@EnableJpaRepositories(basePackageClasses = DepartmentRepository.class)
 public class InventoryDepartmentserviceApplication {
 
 	public static void main(String[] args) {

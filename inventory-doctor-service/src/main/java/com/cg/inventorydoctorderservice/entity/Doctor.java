@@ -73,6 +73,10 @@ public class Doctor {
     @Convert(converter = IntegerListConverter.class)
     private List<Integer> awards;  
     
+    private Integer CountReview;
+    
+    private Integer CountStar;
+    
     private Date created_at;
     
     private Date update_at;

@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://192.168.0.110:3306/booking_doctor?enabledTLSProtocols=TLSv1.2
+    url: jdbc:mysql://172.20.10.6:3306/booking_doctor?enabledTLSProtocols=TLSv1.2
     username: booking_doctor
     password: It123456!
     # Enables execution of data-mysql.sql script

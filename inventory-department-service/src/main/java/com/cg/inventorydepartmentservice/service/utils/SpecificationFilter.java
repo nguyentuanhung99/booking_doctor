@@ -11,22 +11,13 @@ import javax.persistence.criteria.Predicate;
 @Component
 public class SpecificationFilter {
 
-	public Specification<Department> patientSpecification(String name, String gender) {
+	public Specification<Department> departmentSpecification(String name) {
         return (root, cq, cb) -> {
             Predicate p = cb.conjunction();
 
             if (!StringUtils.isEmpty(name)) {
-                p = cb.and(p, cb.like(root.get("firstName") , "%" + name + "%"));
+                p = cb.and(p, cb.like(root.get("name") , "%" + name + "%"));
 
-            }
-            
-            if (!StringUtils.isEmpty(name)) {
-                p = cb.and(p, cb.like(root.get("lastName") , "%" + name + "%"));
-
-            }
-            
-            if (!StringUtils.isEmpty(gender)) {
-                p = cb.and(p, cb.equal(root.get("gender"), "%" + gender + "%"));
             }
             return p;
         };

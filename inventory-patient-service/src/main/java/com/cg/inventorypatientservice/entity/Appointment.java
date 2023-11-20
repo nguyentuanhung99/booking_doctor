@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import com.cg.inventorypatientservice.service.utils.IntegerListConverter;
+import com.cg.inventorypatientservice.service.utils.StringListConverter;
+
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +37,8 @@ public class Appointment {
 
     private Boolean resizeDisabled;
 
+    private Long amount;
+    
     private Boolean moveDisabled;
 
     private Date created_at;
@@ -49,6 +54,10 @@ public class Appointment {
     private String reason;
     
     private Boolean Trangthai;
+    
+    @Lob
+    @Convert(converter = StringListConverter.class)
+    private List<String> listPrescription;
       
     
 	public boolean isValidLesson(Appointment appointment) {

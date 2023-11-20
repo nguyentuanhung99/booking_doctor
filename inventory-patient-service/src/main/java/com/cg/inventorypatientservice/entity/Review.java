@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
+import com.cg.inventorypatientservice.service.utils.IntegerListConverter;
+
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class Review {
     
     private String description;
     
+    private Boolean checkDl;
+    
     private String namePatient;
     
     private Integer idPatient;
@@ -37,7 +41,12 @@ public class Review {
     
     private Integer idReview;
     
+    @Lob
+    @Convert(converter = IntegerListConverter.class)
+    private List<Integer> listIdRely;
+    
     private Date created_at;
+
       
 }
 

@@ -49,6 +49,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers("/patient/myUser").access("hasRole('CLIENT')")
         .antMatchers("/patient/create-review").access("hasRole('CLIENT')")
         .antMatchers("/patient/login").permitAll()//
+        .antMatchers("/patient/getById/**").permitAll()//
+        .antMatchers("/patient/create-mess").permitAll()//
+        .antMatchers("/patient/filter-mess").permitAll()//
+        .antMatchers("/patient/getDetailAppointment/**").permitAll()//
+        .antMatchers("/img/**").permitAll()
         // Disallow everything else..
         .anyRequest().authenticated();
 

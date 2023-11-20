@@ -22,5 +22,3 @@ logging:
 eureka:
   client:
     enabled: true
-
-image.location : C:\img

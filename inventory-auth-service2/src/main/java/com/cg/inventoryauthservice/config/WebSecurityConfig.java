@@ -48,7 +48,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/admin/signup").permitAll()//
 				.antMatchers("/admin/register").permitAll()//
 				.antMatchers("/admin/login").permitAll()//
+				.antMatchers("/admin/update-doctor").access("hasRole('ADMIN')")
+				.antMatchers("/admin/register-doctor").access("hasRole('ADMIN')")
 				.antMatchers("/h2-console/**/**").permitAll()
+				.antMatchers("/img/**").permitAll()
 				// Disallow everything else..
 				.anyRequest().authenticated();
 
